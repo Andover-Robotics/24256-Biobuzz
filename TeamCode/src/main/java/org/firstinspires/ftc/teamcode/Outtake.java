@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-public class Outtake{
+
 
     public class Outtake {
         public final OpMode opMode;
@@ -66,6 +68,4 @@ public class Outtake{
         }
     }
 
-
-}
 
