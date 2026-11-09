@@ -23,10 +23,10 @@ public class Drivetrain {
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void moveRobot(double left_stick_y, double left_stick_x, double right_stick_x) {
-        double y = left_stick_y;
-        double x = left_stick_x;
-        double rx = right_stick_x;
+    public void moveRobot(double lsy, double lsx, double rsx) {
+        double y = lsy;
+        double x = lsx;
+        double rx = rsx;
 
         double denominator = Math.max(Math.abs(y) + Math.abs(x)  + Math.abs(rx), 1);
         frontLeftMotor.setPower((y + x + rx) / denominator);
