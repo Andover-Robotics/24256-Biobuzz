@@ -1,71 +1,77 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+public class Outtake {
+    public final OpMode opMode;
+    public final DcMotorEx rotationMotor;
+    public final DcMotorEx ballMotor;
+    public final DcMotorEx ballMotorSupport;
 
 
-    public class Outtake {
-        public final OpMode opMode;
-        public final DcMotorEx rotationMotor;
-        public final DcMotorEx[] ballMotor = new DcMotorEx[2];
-        public boolean isRunning;
-        public boolean isRotating;
+    public boolean isRunning;
+    public boolean isRotating;
 
-        public Outtake(OpMode opMode){
-            this.opMode = opMode;
-            this.rotationMotor = opMode.hardwareMap.get(DcMotorEx.class, "rotationMotor");
-            for (int i = 0; i < 2; i++){
-                this.ballMotor[i] = opMode.hardwareMap.get(DcMotorEx.class, "ballMotor" + i);
-            }
-            isRunning = false;
-            isRotating = false;
-        }
 
-        public void rotate(){
-            isRotating = true;
-            rotationMotor.setPower(1.0);
-        }
+    public Outtake(OpMode opMode){
+        this.opMode = opMode;
+        this.rotationMotor = opMode.hardwareMap.get(DcMotorEx.class, "rotationMotor");
+        this.ballMotor = opMode.hardwareMap.get(DcMotorEx.class, "ballMotor");
+        this.ballMotorSupport = opMode.hardwareMap.get(DcMotorEx.class, "ballMotor");
 
-        public void rotate(double power){
-            isRotating = true;
-            rotationMotor.setPower(power);
-        }
 
-        public void stopRotate(){
-            isRotating = false;
-            rotationMotor.setPower(0);
-        }
-
-        public void outtake(){
-            isRunning = true;
-            for (int i = 0; i < 2; i++){
-                ballMotor[i].setPower(1.0);
-            }
-        }
-
-        public void outtake(double power){
-            isRunning = true;
-            for (int i = 0; i < 2; i++){
-                ballMotor[i].setPower(power);
-            }
-        }
-
-        public void intake(){
-            isRunning = false;
-            for (int i = 0; i < 2; i++){
-                ballMotor[i].setPower(0);
-            }
-        }
-
-        public void toggle(){
-            isRunning = !isRunning;
-
-            if(isRunning){
-                outtake();
-            } else{
-                intake();
-            }
-        }
+        isRunning = false;
+        isRotating = false;
     }
 
 
+    public void rotate(){
+        isRotating = true;
+        rotationMotor.setPower(1.0);
+    }
+
+
+    public void rotate(double power){
+        isRotating = true;
+        rotationMotor.setPower(power);
+    }
+
+
+    public void stopRotate(){
+        isRotating = false;
+        rotationMotor.setPower(0);
+    }
+
+
+    public void outtake(){
+        isRunning = true;
+        ballMotor.setPower(1.0);
+        ballMotorSupport.setPower(1.0);
+    }
+
+
+    public void outtake(double power){
+        isRunning = true;
+        ballMotor.setPower(power);
+        ballMotorSupport.setPower(power);
+    }
+
+
+    public void intake(){
+        isRunning = false;
+        ballMotor.setPower(0);
+        ballMotorSupport.setPower(1.0);
+    }
+
+
+    public void toggle(){
+        isRunning = !isRunning;
+
+
+        if(isRunning){
+            outtake();
+        } else{
+            intake();
+        }
+    }
+}
