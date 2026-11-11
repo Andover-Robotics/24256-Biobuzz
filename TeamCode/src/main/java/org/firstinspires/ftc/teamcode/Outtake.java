@@ -7,9 +7,9 @@ public class Outtake {
    public final DcMotorEx rotationMotor;
    public final DcMotorEx ballMotor;
    public final DcMotorEx ballMotorSupport;
-   public PID rotationController;
-   public PID ballMotorController;
-   public PID supportMotorController;
+   public PID rotationController = new PID();
+   public PID ballMotorController = new PID();
+   public PID supportMotorController = new PID();
    public boolean isRunning;
    public boolean isRotating;
 
@@ -39,8 +39,8 @@ public class Outtake {
   public void start(double target){
     double currentMainMotor = ballMotor.getVelocity();
     double currentSupportMotor = ballMotorSupport.getVelocity();
-    double powerMain = ballMotorController.pid(target, current);
-    double powerSupport = supportMotorController.pid(target, current);
+    double powerMain = ballMotorController.pid(target, currentMainMotor);
+    double powerSupport = supportMotorController.pid(target, currentSUpportMotor);
     ballMotor.setPower(powerMain);
     ballMotorSupport.setPower(powerSupport);
   }
