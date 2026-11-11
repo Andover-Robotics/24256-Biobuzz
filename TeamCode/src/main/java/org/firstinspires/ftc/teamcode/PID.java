@@ -19,7 +19,7 @@ public class PID {
     double derivative = (error-previousError)/deltaTime;
     double derivativeTerm = 0.0001*derivative;
     
-    double output = proportional + integralTerm + derivativeTerm;
+    double output = proportion + integralTerm + derivativeTerm;
     output = Math.max(-1,Math.min(1, output));
     previousError = error;
     previousTime = currentTime;
