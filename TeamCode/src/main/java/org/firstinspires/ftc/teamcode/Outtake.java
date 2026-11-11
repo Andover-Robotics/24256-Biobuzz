@@ -26,17 +26,20 @@ public class Outtake {
    }
 
   public void rotate(double target){
+    isRotating = true;
     double current = rotationMotor.getVelocity();
     double power = rotationController.pid(target, current);
     rotationMotor.setPower(power);
   }
 
   public void stopRotation(){
+    isRotating = false;
     rotationMotor.setPower(0);
     rotationController.reset();
   }
 
   public void start(double target){
+    isRunning = true;
     double currentMainMotor = ballMotor.getVelocity();
     double currentSupportMotor = ballMotorSupport.getVelocity();
     double powerMain = ballMotorController.pid(target, currentMainMotor);
@@ -46,9 +49,28 @@ public class Outtake {
   }
 
   public void stop(){
+    isRunning = false;
     ballMotor.setPower(0);
     ballMotorSupport.setPower(0);
     supportMotorController.reset();
     ballMotorController.reset();
+  }
+
+  public void toggle(){
+    isRunning = !isRunning;
+    if (isRunning){
+      start();
+    } else{
+      stop();
+    }
+  }
+
+  public void toggleRotation(){
+    isRotating = !isRotating;
+    if (isRotating){
+      rotate();
+    } else{
+      stopRotation();
+    }
   }
 }
