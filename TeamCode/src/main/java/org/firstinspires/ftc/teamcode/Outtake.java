@@ -59,7 +59,7 @@ public class Outtake {
   public void toggle(){
     isRunning = !isRunning;
     if (isRunning){
-      start();
+      start(1.0);
     } else{
       stop();
     }
@@ -68,7 +68,7 @@ public class Outtake {
   public void toggleRotation(){
     isRotating = !isRotating;
     if (isRotating){
-      rotate();
+      rotate(1.0);
     } else{
       stopRotation();
     }
