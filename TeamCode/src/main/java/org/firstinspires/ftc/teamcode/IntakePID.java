@@ -34,6 +34,8 @@ public class IntakePID {
        isRunning = false;
        ballMotorOne.setPower(0);
        ballMotorTwo.setPower(0);
+       ballMotorOneController.reset();
+       ballMotorTwoController.reset();
    }
 
    public void toggle(){
