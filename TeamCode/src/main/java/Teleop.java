@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+// Note: I see a majority of this code was most likely copied from other repositories or from AI
+// Try to write this yourselves because this code won't work
+// Make sure to also check documentation for TeleOp to learn more about how this will work
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -20,15 +23,19 @@ import java.util.List;
 
 
 public class TeleOp {
+    // this is not how a class works
+    // you need a constructor and methods
     public static void TeleOp(String[] args) {
+        // isRunning is not defined
         while (isRunning = true) {
-            String robot;
+            String robot; // what is this supposed to be
         }
+        // the input detection only runs once
         if(gp1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)){
-            robot.outtake.Outtake();
+            robot.outtake.Outtake(); // a robot object hasn't been defined as a field
         }
         if (gp1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-            robot.intake.Outake(-1.0);
+            robot.intake.Outake(-1.0); // misspelling
 
         }if(gp2.wasJustPressed(GamepadKeys.Button.Right_Bumper)){
             robot.intake.Intake();
@@ -54,11 +61,11 @@ public class TeleOp {
             robot.outtake.rotate(-1.0);
         }
         if (gp1.wasJustPressed(GamepadeKeys.Button.X)){
-            isRunning = false;
-            break;
+            isRunning = false; // isRunning never defined
+            break; 
         }
         if (gp1.wasJustPressed(GamepadKeys.Button.Dpad_Down)) {
-            bot.switchAlliance();
+            bot.switchAlliance(); // a bot object was never defined as a field
         }
         if (!Bot.isRed) {
             telemetry.addData("alliance", "Blue");
