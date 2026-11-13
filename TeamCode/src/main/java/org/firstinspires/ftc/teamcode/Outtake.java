@@ -43,7 +43,7 @@ public class Outtake {
     double currentMainMotor = ballMotor.getVelocity();
     double currentSupportMotor = ballMotorSupport.getVelocity();
     double powerMain = ballMotorController.pid(target, currentMainMotor);
-    double powerSupport = supportMotorController.pid(target, currentSUpportMotor);
+    double powerSupport = supportMotorController.pid(target, currentSupportMotor);
     ballMotor.setPower(powerMain);
     ballMotorSupport.setPower(powerSupport);
   }
