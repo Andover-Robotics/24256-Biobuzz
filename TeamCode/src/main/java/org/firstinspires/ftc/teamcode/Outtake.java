@@ -51,6 +51,7 @@ public class Outtake {
     double current = rotationServo.getPower();
     double power = rotationController.pid(target, current);
     rotationServo.setPower(power);
+    updateAngle(power);
   }
 
   public void stopRotation(){
