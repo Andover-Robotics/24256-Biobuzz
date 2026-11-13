@@ -2,8 +2,15 @@ public class PID {
   private double integral = 0;
   private double previousError = 0;
   private long previousTime = 0;
+  private final double kP = 0.001;
+  private final double kI = 0.00001;
+  private final double kD = 0.0001;
+  private final int maxTPS = 2800;
   
   public double pid(double target, double current){
+    target = Math.max(-1.0, Math.min(1.0, target/maxTPS));
+    current = Math.max(-1.0, Math.min(1.0, current/maxTPS));
+    
     double error = target - current;
     long currentTime = System.nanoTime();
     double deltaTime = (currentTime-previousTime) / (1e9);
@@ -13,11 +20,14 @@ public class PID {
       return 0;
     }
 
-    double proportion = 0.001*error;
-    integral += error*deltaTime;
-    double integralTerm = 0.00001 * integral;
+    double proportion = kP*error;
+    double integralTerm = kI * integral;
+    if (Math.abs(proportion + integralTerm){
+      integral += error*deltaTime;
+      integralTerm = kI * integral;
+    }
     double derivative = (error-previousError)/deltaTime;
-    double derivativeTerm = 0.0001*derivative;
+    double derivativeTerm = kD*derivative;
     
     double output = proportion + integralTerm + derivativeTerm;
     output = Math.max(-1,Math.min(1, output));
