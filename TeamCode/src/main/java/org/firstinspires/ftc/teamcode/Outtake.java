@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public class Outtake {
    public final OpMode opMode;
-   public final DcMotorEx rotationMotor;
+   public final CRServo rotationServo;
    public final DcMotorEx ballMotor;
    public final DcMotorEx ballMotorSupport;
    public PID rotationController = new PID();
@@ -16,7 +16,7 @@ public class Outtake {
 
    public Outtake(OpMode opMode){
        this.opMode = opMode;
-       this.rotationMotor = opMode.hardwareMap.get(DcMotorEx.class, "rotationMotor");
+       this.rotationServo = opMode.hardwareMap.get(CRServo.class, "rotationServo");
        this.ballMotor = opMode.hardwareMap.get(DcMotorEx.class, "ballMotor");
        this.ballMotorSupport = opMode.hardwareMap.get(DcMotorEx.class, "ballMotorSupport");
 
@@ -27,14 +27,14 @@ public class Outtake {
 
   public void rotate(double target){
     isRotating = true;
-    double current = rotationMotor.getVelocity();
+    double current = rotationServo.getPower();
     double power = rotationController.pid(target, current);
-    rotationMotor.setPower(power);
+    rotationServo.setPower(power);
   }
 
   public void stopRotation(){
     isRotating = false;
-    rotationMotor.setPower(0);
+    rotationServo.setPower(0);
     rotationController.reset();
   }
 
