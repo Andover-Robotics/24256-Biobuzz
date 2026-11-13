@@ -11,9 +11,11 @@ public class Outtake {
    public PID ballMotorController = new PID();
    public PID supportMotorController = new PID();
    public double angle = 0;
+   // temporary constants for lazy susan rotation
    public final double ROTATIONS_PER_SECOND = 516;
    public final double MAX_ANGLE = 320;
    public final double MIN_ANGLE = -320;
+   // may be subject to change
    public boolean isRunning;
    public boolean isRotating;
 
