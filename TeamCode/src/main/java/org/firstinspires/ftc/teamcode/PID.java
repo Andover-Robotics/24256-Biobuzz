@@ -2,9 +2,9 @@ public class PID {
   private double integral = 0;
   private double previousError = 0;
   private long previousTime = 0;
-  private final double kP = 0.001;
-  private final double kI = 0.00001;
-  private final double kD = 0.0001;
+  private final double kP = 0.1;
+  private final double kI = 0.001;
+  private final double kD = 0.01;
   private final int maxTPS = 2800;
   
   public double pid(double target, double current){
@@ -22,7 +22,7 @@ public class PID {
 
     double proportion = kP*error;
     double integralTerm = kI * integral;
-    if (Math.abs(proportion + integralTerm){
+    if (Math.abs(proportion + integralTerm) >= 0){
       integral += error*deltaTime;
       integralTerm = kI * integral;
     }
