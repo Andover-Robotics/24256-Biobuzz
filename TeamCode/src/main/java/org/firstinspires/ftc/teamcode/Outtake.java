@@ -56,19 +56,19 @@ public class Outtake {
     ballMotorController.reset();
   }
 
-  public void toggle(){
+  public void toggle(double target){
     isRunning = !isRunning;
     if (isRunning){
-      start(1.0);
+      start(target);
     } else{
       stop();
     }
   }
 
-  public void toggleRotation(){
+  public void toggleRotation(double target){
     isRotating = !isRotating;
     if (isRotating){
-      rotate(1.0);
+      rotate(target);
     } else{
       stopRotation();
     }
