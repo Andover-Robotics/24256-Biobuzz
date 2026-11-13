@@ -45,5 +45,6 @@ public class MainTeleOp extends OpMode {
         } else {
             outtake.stopRotation();
         }
+
     }
 }
