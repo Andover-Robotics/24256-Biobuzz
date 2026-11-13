@@ -10,6 +10,10 @@ public class Outtake {
    public PID rotationController = new PID();
    public PID ballMotorController = new PID();
    public PID supportMotorController = new PID();
+   public double angle = 0;
+   public final double ROTATIONS_PER_SECOND = 516;
+   public final double MAX_ANGLE = 320;
+   public final double MIN_ANGLE = -320;
    public boolean isRunning;
    public boolean isRotating;
 
@@ -24,6 +28,21 @@ public class Outtake {
        isRunning = false;
        isRotating = false;
    }
+
+   public void updateAngle(double power){
+    double rotateTime = MAX_ANGLE/ROTATIONS_PER_SECOND;
+    while(isRunning){
+      Thread.sleep(250);
+      angle += power * (ROTATIONS_PER_SECOND / 4);
+      if (angle == MAX_ANGLE){
+        rotate(1.0);
+        Thread.sleep(rotateTime);
+      } else if (angle == MIN_ANGLE){
+        rotate(-1.0);
+        Thread.sleep(rotateTime);
+      }
+    }
+   }    
 
   public void rotate(double target){
     isRotating = true;
