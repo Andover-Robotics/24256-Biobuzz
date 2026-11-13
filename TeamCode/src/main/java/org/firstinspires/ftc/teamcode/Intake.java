@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-// Note: This is the original version of the intake subsystem
-// I made a second version utilizing a PID loop, if you are reading this delete whichever one you think is redundant and keep the other.
-
 public class Intake {
    public final OpMode opMode;
    public final DcMotorEx ballMotorOne;
