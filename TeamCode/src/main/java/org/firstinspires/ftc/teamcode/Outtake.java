@@ -36,7 +36,7 @@ public class Outtake {
 
    public void updateAngle(double power){
     double rotateTime = MAX_ANGLE/ROTATIONS_PER_SECOND;
-    while(isRunning){
+    while(isRotating){
       Thread.sleep(250);
       angle += power * (ROTATIONS_PER_SECOND / 4);
       if (angle == MAX_ANGLE){
@@ -52,18 +52,18 @@ public class Outtake {
   public void lock(double lsy, double lsx, double rsx, double power){
     double time = System.nanoTime();
     double prevTime = 0;
-    double drivetrainX = Math.cos(angle);
-    double drivetrainY = Math.sin(angle);
+    double drivetrainX = Math.cos((Math.PI*angle)/180);
+    double drivetrainY = Math.sin((Math.PI*angle)/180);
     double drivetrainAngle = 0;
 
     while (true){
       prevTime = time;
       time = System.nanoTime();
-      double deltaTime = time - prevTime;
+      double deltaTime = (time - prevTime) / 1000000000;
       drivetrainX += lsy * FORWARD_MOV * deltaTime;
       drivetrainY += lsx * STRAFE_MOV * deltaTime;
       drivetrainAngle += rsx * ROTATE_MOV * deltaTime;
-      double targetAngle = Math.atan2(-drivetrainY, -drivetrainX);
+      double targetAngle = (Math.atan2(-drivetrainY, -drivetrainX) * 180)/Math.PI;
       double outtakeAngle = targetAngle - drivetrainAngle;
       rotateTo(outtakeAngle, power);
       Thread.sleep(250);
@@ -75,7 +75,7 @@ public class Outtake {
     while (angle != target){
       continue;
     }
-    stop();
+    stopRotation();
   }
 
   public void rotate(double target){
