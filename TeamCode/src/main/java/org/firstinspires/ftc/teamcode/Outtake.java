@@ -34,19 +34,9 @@ public class Outtake {
        isRotating = false;
    }
 
-   public void updateAngle(double power){
-    double rotateTime = MAX_ANGLE/ROTATIONS_PER_SECOND;
-    while(isRotating){
-      Thread.sleep(250);
-      angle += power * (ROTATIONS_PER_SECOND / 4);
-      if (angle == MAX_ANGLE){
-        rotate(1.0);
-        Thread.sleep(rotateTime);
-      } else if (angle == MIN_ANGLE){
-        rotate(-1.0);
-        Thread.sleep(rotateTime);
-      }
-    }
+   public void updateAngle(double power, double deltaTime){
+      // this will need to run in the Bot.java loop or whatever to continously update the angle while running
+      angle += power * ROTATIONS_PER_SECOND * deltaTime;
    }    
 
   public void lock(double lsy, double lsx, double rsx, double power){
@@ -59,7 +49,7 @@ public class Outtake {
     while (true){
       prevTime = time;
       time = System.nanoTime();
-      double deltaTime = (time - prevTime) / 1000000000;
+      double deltaTime = (time - prevTime) / 1000000000.0;
       drivetrainX += lsy * FORWARD_MOV * deltaTime;
       drivetrainY += lsx * STRAFE_MOV * deltaTime;
       drivetrainAngle += rsx * ROTATE_MOV * deltaTime;
@@ -83,7 +73,6 @@ public class Outtake {
     double current = rotationServo.getPower();
     double power = rotationController.pid(target, current);
     rotationServo.setPower(power);
-    updateAngle(power);
   }
 
   public void stopRotation(){
