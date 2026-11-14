@@ -11,11 +11,14 @@ public class Outtake {
    public PID ballMotorController = new PID();
    public PID supportMotorController = new PID();
    public double angle = 0;
-   // temporary constants for lazy susan rotation
+   // constants
    public final double ROTATIONS_PER_SECOND = 516;
    public final double MAX_ANGLE = 320;
    public final double MIN_ANGLE = -320;
-   // may be subject to change
+   public final double FORWARD_MOV = 50;
+   public final double STRAFE_MOV = 50;
+   public final double ROTATE_MOV = 50;
+   // these values are temporary for now, subject to change
    public boolean isRunning;
    public boolean isRotating;
 
@@ -46,12 +49,40 @@ public class Outtake {
     }
    }    
 
+  public void lock(double lsy, double lsx, double rsx, double power){
+    double time = System.nanoTime();
+    double prevTime = 0;
+    double drivetrainX = Math.cos(angle);
+    double drivetrainY = Math.sin(angle);
+    double drivetrainAngle = 0;
+
+    while (true){
+      prevTime = time;
+      time = System.nanoTime();
+      double deltaTime = time - prevTime;
+      drivetrainX += lsy * FORWARD_MOV * deltaTime;
+      drivetrainY += lsx * STRAFE_MOV * deltaTime;
+      drivetrainAngle += rsx * ROTATE_MOV * deltaTime;
+      double targetAngle = Math.atan2(-drivetrainY, -drivetrainX);
+      double outtakeAngle = targetAngle - drivetrainAngle;
+      rotateTo(outtakeAngle, power);
+      Thread.sleep(250);
+    }
+  }
+
+  public void rotateTo(double target, double power){
+    rotate(power);
+    while (angle != target){
+      continue;
+    }
+    stop();
+  }
+
   public void rotate(double target){
     isRotating = true;
     double current = rotationServo.getPower();
     double power = rotationController.pid(target, current);
     rotationServo.setPower(power);
-    updateAngle(power);
   }
 
   public void stopRotation(){
