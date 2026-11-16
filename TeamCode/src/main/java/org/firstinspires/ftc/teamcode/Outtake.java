@@ -20,23 +20,17 @@ public class Outtake {
     cellCoordinates[1] = new Coordinate(-13,-13);
     cellCoordinates[2] = new Coordinate(13,13);
     cellCoordinates[3] = new Coordinate(-13,13);
+    // these constants will stay here
+    public final double MAX_ANGLE = 180;
+    public final double MIN_ANGLE = -180;
 
-    // this will change to a regular servo
-    public final CRServo rotationServo;
+    public final Servo rotationServo;
     public final DcMotorEx ballMotor;
     public final DcMotorEx ballMotorSupport;
     public PID rotationController = new PID();
     public PID ballMotorController = new PID();
     public PID supportMotorController = new PID();
     public double angle = 0;
-    // constants; subject to change
-    public final double ROTATIONS_PER_SECOND = 516;
-    public final double MAX_ANGLE = 320;
-    public final double MIN_ANGLE = -320;
-    public final double FORWARD_MOV = 50;
-    public final double STRAFE_MOV = 50;
-    public final double ROTATE_MOV = 50;
-
     public boolean isRunning;
     public boolean isRotating;
 
@@ -44,7 +38,7 @@ public class Outtake {
 
     public Outtake(OpMode opMode){
        this.opMode = opMode;
-       this.rotationServo = opMode.hardwareMap.get(CRServo.class, "rotationServo");
+       this.rotationServo = opMode.hardwareMap.get(Servo.class, "rotationServo");
        this.ballMotor = opMode.hardwareMap.get(DcMotorEx.class, "ballMotor");
        this.ballMotorSupport = opMode.hardwareMap.get(DcMotorEx.class, "ballMotorSupport");
        pinpoint = opMode.hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
@@ -56,8 +50,7 @@ public class Outtake {
 
     public void updateAngle(double power, double deltaTime) throws InterruptedException {
       // this will need to run in the Bot.java loop or whatever to continously update the angle while running
-      // will change this to work with regular servo in next update, or will be deleted
-      angle += power * ROTATIONS_PER_SECOND * deltaTime;
+      angle = rotationServo.getPosition();
       if (angle > MAX_ANGLE){
           stop();
           rotateTo(0,power);
