@@ -30,7 +30,7 @@ public class Outtake {
     public PID rotationController = new PID();
     public PID ballMotorController = new PID();
     public PID supportMotorController = new PID();
-    public double angle = 0;
+    public double angle;
     public boolean isRunning;
     public boolean isRotating;
 
@@ -43,6 +43,7 @@ public class Outtake {
        this.ballMotorSupport = opMode.hardwareMap.get(DcMotorEx.class, "ballMotorSupport");
        pinpoint = opMode.hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
        pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, robot.x, robot.y, AngleUnit.DEGREES, robotHeading));
+    `  this.angle = rotationServo.getPosition();
 
        isRunning = false;
        isRotating = false;
