@@ -9,9 +9,11 @@ public class PID {
   private final double kD = 0.01;
   private final int maxTPS = 2800;
   
-  public double pid(double target, double current){
-    target = Math.max(-1.0, Math.min(1.0, target/maxTPS));
-    current = Math.max(-1.0, Math.min(1.0, current/maxTPS));
+  public double pid(double target, double current, boolean TPS){
+    if (TPS){
+      target = Math.max(-1.0, Math.min(1.0, target/maxTPS));
+      current = Math.max(-1.0, Math.min(1.0, current/maxTPS));
+    }
     
     double error = target - current;
     long currentTime = System.nanoTime();
