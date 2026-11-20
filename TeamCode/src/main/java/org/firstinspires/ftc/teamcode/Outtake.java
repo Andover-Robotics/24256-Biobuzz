@@ -1,43 +1,34 @@
 package org.firstinspires.ftc.teamcode.subsystems;
-import org.firstinspires.ftc.teamcode.Coordinate;
-
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.teamcode.PID;
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
-
-
 public class Outtake {
     public final OpMode opMode;
-    public Coordinate robot;
-    public double robotHeading;
 
     private final Follower follower;
     private final PoseFactory p = PoseFactory.degrees();
     public Pose[] cellCoordinates = new Pose[]{
-            p.of(13, -13, 0),
-            p.of(-13, -13, 0),
-            p.of(13, 13, 0),
-            p.of(-13, 13, 0)
+            p.of(85, 59, 0),
+            p.of(59, 59, 0),
+            p.of(85, 85, 0),
+            p.of(59, 85, 0)
     };
-    public final double MAX_ANGLE = 180;
-    public final double MIN_ANGLE = -180;
+    public final double maxAngle = 180;
+    public final double minAngle = -180;
+    public final double servoRange = 360;
+    public final double centerPosition = 0.5;
+    public final double rotateStep = 2;
 
     public final Servo rotationServo;
     public final DcMotorEx ballMotor;
     public final DcMotorEx ballMotorSupport;
-    public PID rotationController = new PID();
-    public PID ballMotorController = new PID();
-    public PID supportMotorController = new PID();
     public double angle;
     public boolean isRunning;
     public boolean isRotating;
-
-    GoBildaPinpointDriver pinpoint;
 
     public Outtake(OpMode opMode, Follower follower){
         this.opMode = opMode;
@@ -45,73 +36,48 @@ public class Outtake {
         this.rotationServo = opMode.hardwareMap.get(Servo.class, "rotationServo");
         this.ballMotor = opMode.hardwareMap.get(DcMotorEx.class, "ballMotor");
         this.ballMotorSupport = opMode.hardwareMap.get(DcMotorEx.class, "ballMotorSupport");
-        this.angle = rotationServo.getPosition();
-
-
+        // needed for setVelocity(), which replaces our PID for the flywheel
+        ballMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        ballMotorSupport.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.angle = 0;
         isRunning = false;
         isRotating = false;
     }
-
-    public void updateAngle(double angle, double deltaTime) throws InterruptedException {
-      angle = rotationServo.getPosition();
-      if (angle > MAX_ANGLE){
-          stop();
-          rotateTo(0,angle);
-      } else if (angle < MIN_ANGLE){
-          stop();
-          rotateTo(0, -angle);
-      }
+    public void updateAngle(){
+        while (angle > 180) angle -= 360;
+        while (angle < -180) angle += 360;
+        angle = Math.max(minAngle, Math.min(maxAngle, angle));
+        rotationServo.setPosition(centerPosition + angle / servoRange);
     }
-
-    public void lock(Pose target, double angle) throws InterruptedException {
-        Pose current = follower.getPose();
+    public void lock(Pose target){
+        Pose current = follower.pose();
         double targetAngle = Math.toDegrees(Math.atan2(
-                -current.getY() - target.getY(),
-                -current.getX() - target.getX()
+                target.y() - current.y(),
+                target.x() - current.x()
         ));
-        double outtakeAngle = targetAngle;
-        rotateTo(outtakeAngle, angle);
+        rotateTo(targetAngle - Math.toDegrees(current.heading()));
     }
-
-
-    public void rotateTo(double target, double angle) throws InterruptedException {
-        rotate(angle);
-        double tolerance = 0.1;
-        while (Math.abs(target - angle) > tolerance) {
-            Thread.sleep(10);
-        }
-        stopRotation();
+    public void rotateTo(double target){
+        angle = target;
+        updateAngle();
     }
-
-    public void rotate(double target){
+    public void rotate(double direction){
         isRotating = true;
-        double current = rotationServo.getPosition();
-        double angle = rotationController.pid(target, current, false);
-        rotationServo.setPosition(angle);
+        rotateTo(angle + Math.signum(direction) * rotateStep);
     }
-
     public void stopRotation(){
         isRotating = false;
-        rotationServo.setPosition(0);
-        rotationController.reset();
     }
-
     public void start(double target){
         isRunning = true;
-        double currentMainMotor = ballMotor.getVelocity();
-        double currentSupportMotor = ballMotorSupport.getVelocity();
-        double positionMain = ballMotorController.pid(target, currentMainMotor, true);
-        double positionSupport = supportMotorController.pid(target, currentSupportMotor, true);
-        ballMotor.setPower(positionMain);
-        ballMotorSupport.setPower(positionSupport);
+        ballMotor.setVelocity(target);
+        ballMotorSupport.setVelocity(target);
     }
 
     public void stop(){
         isRunning = false;
         ballMotor.setPower(0);
         ballMotorSupport.setPower(0);
-        supportMotorController.reset();
-        ballMotorController.reset();
     }
 
     public void toggle(double target){
