@@ -1,26 +1,29 @@
 package org.firstinspires.ftc.teamcode.subsystems;
+import org.firstinspires.ftc.teamcode.Coordinate;
 
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.teamcode.subsystems.PID;
+import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.PID;
+import com.pedropathing.api.PoseFactory;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.math.Pose;
+
 
 public class Outtake {
     public final OpMode opMode;
     public Coordinate robot;
     public double robotHeading;
-    // Note: These constants may be moved to a different file later
-    public Coordinate[] cellCoordinates = new Coordinate[4];
-    cellCoordinates[0] = new Coordinate(13,-13);
-    cellCoordinates[1] = new Coordinate(-13,-13);
-    cellCoordinates[2] = new Coordinate(13,13);
-    cellCoordinates[3] = new Coordinate(-13,13);
-    // these constants will stay here
+
+    private final Follower follower;
+    private final PoseFactory p = PoseFactory.degrees();
+    public Pose[] cellCoordinates = new Pose[]{
+            p.of(13, -13, 0),
+            p.of(-13, -13, 0),
+            p.of(13, 13, 0),
+            p.of(-13, 13, 0)
+    };
     public final double MAX_ANGLE = 180;
     public final double MIN_ANGLE = -180;
 
@@ -36,44 +39,43 @@ public class Outtake {
 
     GoBildaPinpointDriver pinpoint;
 
-    public Outtake(OpMode opMode){
-       this.opMode = opMode;
-       this.rotationServo = opMode.hardwareMap.get(Servo.class, "rotationServo");
-       this.ballMotor = opMode.hardwareMap.get(DcMotorEx.class, "ballMotor");
-       this.ballMotorSupport = opMode.hardwareMap.get(DcMotorEx.class, "ballMotorSupport");
-       pinpoint = opMode.hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
-       pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, robot.x, robot.y, AngleUnit.DEGREES, robotHeading));
-    `  this.angle = rotationServo.getPosition();
+    public Outtake(OpMode opMode, Follower follower){
+        this.opMode = opMode;
+        this.follower = follower;
+        this.rotationServo = opMode.hardwareMap.get(Servo.class, "rotationServo");
+        this.ballMotor = opMode.hardwareMap.get(DcMotorEx.class, "ballMotor");
+        this.ballMotorSupport = opMode.hardwareMap.get(DcMotorEx.class, "ballMotorSupport");
+        this.angle = rotationServo.getPosition();
 
-       isRunning = false;
-       isRotating = false;
+
+        isRunning = false;
+        isRotating = false;
     }
 
-    public void updateAngle(double power, double deltaTime) throws InterruptedException {
-      // this will need to run in the Bot.java loop or whatever to continously update the angle while running
+    public void updateAngle(double angle, double deltaTime) throws InterruptedException {
       angle = rotationServo.getPosition();
       if (angle > MAX_ANGLE){
           stop();
-          rotateTo(0,power);
+          rotateTo(0,angle);
       } else if (angle < MIN_ANGLE){
           stop();
-          rotateTo(0, -power);
+          rotateTo(0, -angle);
       }
     }
 
-    public void lock(Coordinate target, double power) throws InterruptedException {
-        pinpoint.update();
-        Pose2D pose2D = pinpoint.getPosition();
-        robot.x = pose2D.getX(DistanceUnit.INCH);
-        robot.y = pose2D.getY(DistanceUnit.INCH);
-        double targetAngle = (Math.atan2(-robot.y - target.y, -robot.x - target.x) * 180)/Math.PI;
+    public void lock(Pose target, double angle) throws InterruptedException {
+        Pose current = follower.getPose();
+        double targetAngle = Math.toDegrees(Math.atan2(
+                -current.getY() - target.getY(),
+                -current.getX() - target.getX()
+        ));
         double outtakeAngle = targetAngle;
-        rotateTo(outtakeAngle, power);
+        rotateTo(outtakeAngle, angle);
     }
 
 
-    public void rotateTo(double target, double power) throws InterruptedException {
-        rotate(power);
+    public void rotateTo(double target, double angle) throws InterruptedException {
+        rotate(angle);
         double tolerance = 0.1;
         while (Math.abs(target - angle) > tolerance) {
             Thread.sleep(10);
@@ -83,14 +85,14 @@ public class Outtake {
 
     public void rotate(double target){
         isRotating = true;
-        double current = rotationServo.getPower();
-        double power = rotationController.pid(target, current, false);
-        rotationServo.setPower(power);
+        double current = rotationServo.getPosition();
+        double angle = rotationController.pid(target, current, false);
+        rotationServo.setPosition(angle);
     }
 
     public void stopRotation(){
         isRotating = false;
-        rotationServo.setPower(0);
+        rotationServo.setPosition(0);
         rotationController.reset();
     }
 
@@ -98,10 +100,10 @@ public class Outtake {
         isRunning = true;
         double currentMainMotor = ballMotor.getVelocity();
         double currentSupportMotor = ballMotorSupport.getVelocity();
-        double powerMain = ballMotorController.pid(target, currentMainMotor, true);
-        double powerSupport = supportMotorController.pid(target, currentSupportMotor, true);
-        ballMotor.setPower(powerMain);
-        ballMotorSupport.setPower(powerSupport);
+        double positionMain = ballMotorController.pid(target, currentMainMotor, true);
+        double positionSupport = supportMotorController.pid(target, currentSupportMotor, true);
+        ballMotor.setPower(positionMain);
+        ballMotorSupport.setPower(positionSupport);
     }
 
     public void stop(){
