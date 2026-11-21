@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class Intake {
    public final OpMode opMode;
@@ -12,6 +13,9 @@ public class Intake {
        this.opMode = opMode;
        this.ballMotorOne = opMode.hardwareMap.get(DcMotorEx.class, "ballMotorOne");
        this.ballMotorTwo = opMode.hardwareMap.get(DcMotorEx.class, "ballMotorTwo");
+       ballMotorTwo.setDirection(DcMotorSimple.Direction.FORWARD);
+       ballMotorOne.setDirection(DcMotorSimple.Direction.FORWARD);
+
        this.isRunning = false;
    }
 
@@ -28,7 +32,7 @@ public class Intake {
    }
 
    public void stop(){
-       isRunning = true;
+       isRunning = false;
        ballMotorOne.setPower(0);
        ballMotorTwo.setPower(0);
    }
