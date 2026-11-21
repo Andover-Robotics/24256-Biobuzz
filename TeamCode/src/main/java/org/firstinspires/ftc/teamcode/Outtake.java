@@ -36,7 +36,6 @@ public class Outtake {
         this.rotationServo = opMode.hardwareMap.get(Servo.class, "rotationServo");
         this.ballMotor = opMode.hardwareMap.get(DcMotorEx.class, "ballMotor");
         this.ballMotorSupport = opMode.hardwareMap.get(DcMotorEx.class, "ballMotorSupport");
-        // needed for setVelocity(), which replaces our PID for the flywheel
         ballMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         ballMotorSupport.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.angle = 0;
