@@ -35,12 +35,26 @@ public class MainTeleOp extends OpMode {
             robot.outtake.start(shooterSpeed);
         }
 
-        if (gamepad1.dpad_left) {
+        if(gamepad1.dpad_up) {
+            robot.outtake.lock(robot.outtake.cellCoordinates[0]);
+        }
+        if(gamepad1.dpad_down) {
+            robot.outtake.lock(robot.outtake.cellCoordinates[1]);
+        }
+        if(gamepad1.dpad_right) {
+            robot.outtake.lock(robot.outtake.cellCoordinates[2]);
+        }
+        if(gamepad1.dpad_left) {
+            robot.outtake.lock(robot.outtake.cellCoordinates[3]);
+        }
+
+        if (gamepad1.left_bumper) {
             robot.outtake.rotate(-turretSpeed);
-        } else if (gamepad1.dpad_right) {
+        } else if (gamepad1.right_bumper) {
             robot.outtake.rotate(turretSpeed);
         } else if (robot.outtake.isRotating) {
             robot.outtake.stopRotation();
         }
+
     }
 }
