@@ -14,6 +14,12 @@ public class Robot {
     public final Drivetrain drivetrain;
     public final Intake intake;
     public final Outtake outtake;
+    public Pose[] cellCoordinates = new Pose[]{
+            p.of(85, 59, 0),
+            p.of(59, 59, 0),
+            p.of(85, 85, 0),
+            p.of(59, 85, 0)
+    };
 
     public Robot(OpMode opMode) {
         this.opMode = opMode;
