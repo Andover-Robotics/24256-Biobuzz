@@ -8,12 +8,6 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
 public class Outtake {
     public final OpMode opMode;
-    public Pose[] cellCoordinates = new Pose[]{
-            p.of(85, 59, 0),
-            p.of(59, 59, 0),
-            p.of(85, 85, 0),
-            p.of(59, 85, 0)
-    };
     public final DcMotorEx ballMotor;
     public final DcMotorEx ballMotorSupport;
     public boolean isRunning;
