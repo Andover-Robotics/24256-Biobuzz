@@ -17,14 +17,12 @@ public class Turret {
     public final double centerPosition = 0.5;
     public final Servo rotationServo;
     public double angle;
-    public boolean isRotating;
 
     public Turret(OpMode opMode, Follower follower){
         this.opMode = opMode;
         this.follower = follower;
         this.rotationServo = opMode.hardwareMap.get(Servo.class, "rotationServo");
         this.angle = 0;
-        isRotating = false;
     }
     public void lock(Pose target){
         Pose current = follower.pose();
@@ -36,7 +34,6 @@ public class Turret {
     }
     public void rotateTo(double target) {
         angle = target;
-        isRotating = false;
         while (this.angle > 180) this.angle -= 360;
         while (this.angle < -180) this.angle += 360;
         this.angle = Math.max(minAngle, Math.min(maxAngle, this.angle));
