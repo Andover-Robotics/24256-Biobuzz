@@ -21,8 +21,6 @@ public class Outtake {
     public final double minAngle = -180;
     public final double servoRange = 360;
     public final double centerPosition = 0.5;
-    public final double rotateStep = 2;
-
     public final Servo rotationServo;
     public final DcMotorEx ballMotor;
     public final DcMotorEx ballMotorSupport;
@@ -42,12 +40,6 @@ public class Outtake {
         isRunning = false;
         isRotating = false;
     }
-    public void updateAngle(){
-        while (angle > 180) angle -= 360;
-        while (angle < -180) angle += 360;
-        angle = Math.max(minAngle, Math.min(maxAngle, angle));
-        rotationServo.setPosition(centerPosition + angle / servoRange);
-    }
     public void lock(Pose target){
         Pose current = follower.pose();
         double targetAngle = Math.toDegrees(Math.atan2(
@@ -56,16 +48,13 @@ public class Outtake {
         ));
         rotateTo(targetAngle - Math.toDegrees(current.heading()));
     }
-    public void rotateTo(double target){
+    public void rotateTo(double target) {
         angle = target;
-        updateAngle();
-    }
-    public void rotate(double direction){
-        isRotating = true;
-        rotateTo(angle + Math.signum(direction) * rotateStep);
-    }
-    public void stopRotation(){
         isRotating = false;
+        while (this.angle > 180) this.angle -= 360;
+        while (this.angle < -180) this.angle += 360;
+        this.angle = Math.max(minAngle, Math.min(maxAngle, this.angle));
+        rotationServo.setPosition(centerPosition + this.angle / servoRange);
     }
     public void start(double target){
         isRunning = true;
@@ -84,14 +73,6 @@ public class Outtake {
             stop();
         } else{
             start(target);
-        }
-    }
-
-    public void toggleRotation(double target){
-        if (isRotating){
-            stopRotation();
-        } else{
-            rotate(target);
         }
     }
 }
